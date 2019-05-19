@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DragWindow</title>
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        #windowBox{
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            top: 0px;
+            left: 0px;
+            background-color: rgb(0, 255, 191);
+        }
+        #windowHeader{
+            position: absolute;
+            width: 500px;
+            height: 60px;
+            background-color: rgb(2, 91, 163);
+        }
+        .headerItem{
+            display: inline;
+            line-height: 60px;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+        }
+        .handle{
+            position: absolute;
+            right: 10px;
+            top: 2px;
+        }
+        #title{
+            position: absolute;
+            left: 10px;
+            margin-top: 10px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="windowBox">
+        <div id="windowHeader">
+            <div id="title" class="headerItem" onclick="console.log('112')">
+                这是一个标题
+            </div>
+            <div class="handle">
+                <div id="fullScreen" class="headerItem" onclick="fullScreen">
+                    全屏
+                </div>
+                <div id="delete" class="headerItem" onclick="deleteBox">
+                    关闭
+                </div>
+            </div>
+        </div>
+        <div id="content">
+
+        </div>
+    </div>
+    <script>
+        let isDrag = false;
+        let mouseBoxTop = 0;
+        let mouseBoxLeft = 0;
+        let dragHeader = document.getElementById('windowHeader');
+        let windowBox = document.getElementById('windowBox');
+        let deleteItem = document.getElementById('delete');
+        let fullScreenItem = document.getElementById('fullScreen');
+        function handleMove(e) {
+            console.log(e)
+            console.log(isDrag)
+            if(isDrag === true){
+                let clientX = e.clientX;
+                let clientY = e.clientY;
+                windowBox.style.top = (clientY- mouseBoxTop)+'px';
+                windowBox.style.left = (clientX- mouseBoxLeft)+'px';
+            }
+        }
+        function calcBoxPra(e){
+            isDrag = true;
+            let rowTop = Number(windowBox.style.top.split('px').join(""));
+            let rowLeft = Number(windowBox.style.left.split('px').join(""));
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            mouseBoxTop = clientY - rowTop;
+            mouseBoxLeft = clientX - rowLeft;
+        }
+
+
+        function deleteBox(e){
+            console.log('delete!');
+            document.body.removeChild(windowBox);
+        }
+        function fullScreen(e){
+            console.log('fullScreen!');
+            let maxHeight = window.innerHeight;
+            let maxWidth = window.innerWidth;
+            windowBox.style.left = 0;
+            windowBox.style.top = 0;
+            windowBox.style.height = maxHeight+'px';
+            windowBox.style.width = maxWidth+'px';
+            dragHeader.style.width = maxWidth + 'px';
+        }
+        dragHeader.addEventListener('mousedown',calcBoxPra,false);
+        dragHeader.addEventListener('mouseup', () => { isDrag = false ; console.log('mouseup')}, false);
+        dragHeader.addEventListener('mousemove',handleMove,false);
+        deleteItem.addEventListener('click', deleteBox,false);
+        fullScreenItem.addEventListener('click', fullScreen, false);
+        deleteItem.addEventListener('mousemove',(e) => {e.cancelBubble = true||e.stopPropagation()},true);
+        fullScreenItem.addEventListener('mousemove', (e) => { e.cancelBubble = true || e.stopPropagation() }, true);
+    </script>
+</body>
+</html>
